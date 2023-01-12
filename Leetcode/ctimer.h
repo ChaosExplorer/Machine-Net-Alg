@@ -41,17 +41,38 @@ static void checkVecOrder(vector<int>& in)
 {
 	bool ret = true;
 	
-	if (in.size() > 2) {
-		if (in[0] <= in[1])
-			[&](){ for(int i = 1; i < in.size()-1; ++i) if(in[i] > in[i+1]) ret = false;};
-	    else
-			[&](){ for(int i = 1; i < in.size()-1; ++i) if(in[i] < in[i+1]) ret = false;};
+	short ascend_flag = 0;
+	for(int i = 1; i < in.size()-1; ++i) {
+		if(in[i] < in[i+1]) {
+			if (ascend_flag == -1)	{ 
+				ret = false; break; 
+			}
+			ascend_flag = 1; 
+		}
+		else if(in[i] > in[i+1]) { 
+			if (ascend_flag == 1)	{
+				ret = false; break; 
+			}
+			ascend_flag = -1; 
+		}
 	}
 	
 	if (ret)
 		cout << endl << "Sorted !!" << endl;
 	else
 		cout << endl << "Not Sorted !!" << endl;
+}
+
+template <class T>
+static void printVec(vector<T>& in) {
+	if (in.empty())	return;
+	cout << "vector : " << endl;
+	int i = 0;	// notice : if use size_t, in.size() - 2 maybe trigger overflow
+	for (; i <= (int)in.size() - 2; ++i) {	// size() - 2 overflows when size <= 1
+		cout << in[i] << "  |  ";
+	}
+	//std::for_each(in.begin(), in.end(), [](T& it) { cout << it << " , "; });
+	cout << in[i] << endl;
 }
 
 

@@ -18,7 +18,8 @@ public:
     ListNode* reverseList(ListNode* head) {
         ListNode* t1 = head, *t2, *t3;
 
-        if (t1 != nullptr) t2 = t1->next; else return head;
+        if (t1 != nullptr) t2 = t1->next; 
+        else return head;
 
         while(1) {
             if (t2) t3 = t2->next; else break;
@@ -37,47 +38,44 @@ public:
 
 int main()
 {
+    // create list
     ListNode *in = nullptr, *head = nullptr;
 	
     int myint = 0;
 	
 	cin >> myint;
-	in = new ListNode(myint);
+
+	if (-99 != myint)   in = new ListNode(myint);
 	head = in;
 
-    while(1) {
+    while(in) {
     	cin >> myint;
 		if (myint == -99) break;
 		in->next = new ListNode(myint);
 		in = in->next;
-    }     
-	in->next = nullptr;
+    }
+
+	if(in)  in->next = nullptr;
 	
 
-	//generateVec(in, 1000000, 100000);
-	
+    // cal
 	auto t1 = t_now();
     
-	// TODO
 	Solution s;
 	head = s.reverseList(head);
 	
 	auto t2 = t_now();
 	t_cal_echo(t1, t2);
 	
-	//checkVecOrder(in);
 
-	//cout << binaryFindKth(in, 0, in.size()-1, 2) << endl;
-
-    //for (auto x : in)
-	//cout << x << "    ";
+    // print and clean
     in = head;
 	while (in) {
 		cout << in->val << endl;
+        delete in;
+
 		in = in->next;
 	}
-	
-	//cout << ret << endl;
 	
     cin.get();
 
