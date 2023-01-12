@@ -4,16 +4,20 @@
 
 // merge
 vector<int> merge(vector<int>& vec1, vector<int>& vec2) {
-    int span = std::max(vec1.back(), vec2.back()) + 1;
-    int span_num = std::abs((int)(vec1.size() - vec2.size()));
+    int span;
+    if (vec1.back() > vec2.back()) {    // notice : when == , vec1 should push , vec2
+        span = vec1.back()+1;
+        vec2.push_back(span);
+    }
+    else {
+        span = vec2.back()+1;
+        vec1.push_back(span);
+    }
 
-    while (vec1.size() < vec2.size())   vec1.push_back(span);
-    while (vec2.size() < vec1.size())   vec2.push_back(span);
-
-    vector<int> ret(vec1.size()*2, 0);
+    vector<int> ret(vec1.size()+vec2.size()+1, 0);
 
     int i = 0, j = 0, t = 0;  
-    while (i < vec1.size() && j < vec1.size()) {      // notice : only i < vec1.size() is wrong
+    while (i < vec1.size() && j < vec2.size()) {      // notice : only i < vec1.size() is wrong
         if (vec1[i] <= vec2[j]) {
             ret[t] = vec1[i];
             ++i;
@@ -26,12 +30,36 @@ vector<int> merge(vector<int>& vec1, vector<int>& vec2) {
         ++t;
     }
     
-    while (span_num-- > 0) {
-        ret.pop_back();
-    }
+    ret.pop_back();
 
     return ret;
 }
+
+vector<int> merge2(vector<int>& vec1, vector<int>& vec2) {
+    vector<int> ret(vec1.size()+vec2.size(), 0);
+
+    int i = 0, j = 0, t = 0;  
+    while (i < vec1.size() && j < vec2.size()) {      // notice : only i < vec1.size() is wrong
+        if (vec1[i] <= vec2[j]) {
+            ret[t] = vec1[i];
+            ++i;
+        }
+        else {
+            ret[t] = vec2[j];
+            ++j;
+        }
+
+        ++t;
+    }
+    
+    while (i < vec1.size()) {   ret[t++] = vec1[i++]; }
+    while (j < vec2.size()) {   ret[t++] = vec2[j++]; }
+    
+
+    return ret;
+}
+
+// test : merge2 faster than merge, although merge is briefer, got one loop
 
 // sort
 
@@ -48,10 +76,10 @@ void mergeSort (vector<int>& vec, uint left, uint right) {
 
     //vector<int> vec1(&vec[left], &vec[mid+1]);   // notice: left close, right open
     vector<int> vec1(vec.begin()+left, vec.begin()+ mid+1);   // notice: left close, right open
-    vector<int> vec2;
-    if (right < vec.size()-1)   vec2.assign( vec.begin()+mid+1, vec.begin()+right+1);
-    else vec2.assign(vec.begin()+mid+1, vec.end());
-    //auto vec2 = vector<int>(&vec[mid+1], &vec[right+1]);    // notice , cann't use when right+1 reach vec.end(), maybe it has checks.
+    //vector<int> vec2;
+    //if (right < vec.size()-1)   vec2.assign( vec.begin()+mid+1, vec.begin()+right+1);
+    //else vec2.assign(vec.begin()+mid+1, vec.end());
+    vector<int> vec2(&vec[mid+1], &vec[right+1]);    // notice , cann't use when right+1 reach vec.end(), maybe it has checks. - X
     //printVec(vec1);
     //printVec(vec2);
     auto ret = merge(vec1, vec2);
@@ -68,8 +96,8 @@ void mergeSort (vector<int>& vec, uint left, uint right) {
 int main() {
  
     vector<int> data;
-    generateVec(data, 10, 100000);
-    printVec(data);
+    generateVec(data, 1000000, 90000);
+    //printVec(data);
 
     auto t1 = t_now();
 
@@ -79,7 +107,7 @@ int main() {
     t_cal_echo(t1, t2);
 
 
-    printVec(data);
+    //printVec(data);
     auto ret = std::is_sorted(data.begin(), data.end());
     checkVecOrder(data);
 
